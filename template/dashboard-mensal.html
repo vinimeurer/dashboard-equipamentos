@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            color: #343a40;
+        }
+        .container {
+            margin-top: 30px;
+            max-width: 2200px;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #0f6636;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-header .header-title {
+            margin: 0;
+        }
+        .card-header .form-group {
+            margin-bottom: 0;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+            padding-top: 0px;
+        }
+        
+        .total-geral{
+            border: 1px solid #179b53;
+        }
+        
+        
+        .totalizadores {
+            margin-top: 20px;
+        }
+        .totalizador {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.125rem;
+            flex: 1;
+            margin-right: 15px;
+            background-color: #ffffff;
+        }
+        .totalizador:last-child {
+            margin-right: 0;
+        }
+        .totalizador p {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        .table-container {
+            max-height: 800px;
+            overflow-y: auto;
+            text-transform: uppercase;
+            text-align: left;
+        }
+        .bg-warning {
+            background-color: #ffffff !important;
+        }
+        .bg-information {
+            background-color: #2596be !important;
+        }
+        .modal-lg {
+            max-width: 90%;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        .plotly-graph-div {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        .plotly-legend {
+            margin-top: 20px;
+        }
+        .btn-stretched {
+            width: 100%;
+        }
+        .btn-refresh {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .graph-container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .graph-container > div {
+            width: 45%;
+        }
+        
+        .total-geral {
+            border: 3px solid #0f6636;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #0f6636;
+        }
+        
+        .total-conexao {
+            border: 3px solid #0f6636;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #0f6636;
+        }
+
+        .total-trafego {
+            border: 3px solid #0f6636;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #0f6636;
+        }
+        
+        
+        
+        .section-title {
+            margin-top: 5px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        
+        
+        .totalizadores d-flex {
+            margin-top: 10px !important;
+        }
+        
+        .btn-custom {
+            background-color: #0f6636;
+            border-color: #0f6636;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0d5a31;
+            border-color: #0d5a31;
+            color: white;
+        }
+        .btn-custom:active {
+            background-color: #094e26;
+            border-color: #094e26;
+            color: white;
+        }
+        .btn-custom:focus, .btn-custom:focus:hover, .btn-custom:focus:active {
+            box-shadow: none;
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-overlay p {
+            margin: 10px; /* Aumente o valor conforme necessário */
+            font-size: 1.25rem;
+            color: #343a40;
+        }
+        
+        .loading-spinner {
+            border: 10px solid #f3f3f3;
+            border-top: 10px solid #0f6636;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        
+        /* Estilos do botão de menu */
+        .menu-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #0f6636;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .menu-btn:focus {
+            outline: none;
+        }
+
+        /* Estilos do menu lateral */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            background-color: #0f6636;
+            color: white;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            z-index: 1002;
+        }
+        .sidebar a {
+            padding: 8px 16px;
+            text-decoration: none;
+            font-size: 1.25rem;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #0d5a31;
+        }
+        .sidebar .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+            cursor: pointer;
+        }
+
+        /* Estilos do overlay escurecido */
+        .overlay {
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(255, 255, 255, 0.8); /* Cor escurecida com transparência */
+            display: none; /* Inicialmente escondido */
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-btn" onclick="openNav()">&#9776; Menu</button>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="/" id="dailyLink">Dashboard - Diário</a>
+        <a href="/dashboard-mensal.html" id="monthlyLink">Dashboard - Mensal</a>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    </div>
+
+    <div id="myOverlay" class="overlay"></div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="header-title">Dashboard Mensal de Equipamentos em {{ formatted_actual_complete }}</div>
+                <form id="dateForm" method="POST" action="/update_month">
+                    <div class="form-group">
+                        <input type="month" id="monthPicker" name="month" value="{{ selected_month }}" required class="form-control d-inline-block" style="width: auto;">
+                    </div>
+                </form>
+            </div>
+            <div class="card-body">
+                <div class="graph-container">
+                    <div>
+                        <div id="plotly-chart" class="plotly-graph-div">
+                            {{ conn_line_html|safe }}
+                        </div>
+                    </div>
+                </div>
+                <div class="total-geral">
+                    <div class="section-title">
+                        Média de Dados de Equipamentos em {{ formatted_actual_complete }}
+                    </div>
+                    <div class="totalizadores d-flex">
+                        <div class="totalizador">
+                            <h4>Cadastrados</h4>
+                            <p>{{ media_cadastrados }}</p>
+                        </div>
+                        <div class="totalizador">
+                            <h4>Conectados</h4>
+                            <p>{{ media_conectados }}</p>
+                        </div>
+                        <div class="totalizador">
+                            <h4>Desconectados</h4>
+                            <p>{{ media_desconectados }}</p>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-custom mt-3 btn-stretched" data-toggle="modal" data-target="#dataModal">
+                    Ver Dados
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p> Carregando...</p>
+    </div>
+
+    <div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="dataModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Dados de equipamentos do dia {{formatted_actual_date}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-container">
+                        {{ data_html|safe }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <h6><strong>OBS: </strong>Dados somente do dia atual. para consultas referentes a outros dias, acesssar o <a href="/">dashboard diário</a></h6>
+
+                    <button type="button" class="btn btn-custom" data-dismiss="modal">Fechar</button>
+                </div>
+                <div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function openNav() {
+            document.getElementById("mySidebar").style.left = "0";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+        function closeNav() {
+            document.getElementById("mySidebar").style.left = "-250px";
+            document.getElementById("myOverlay").style.display = "none";
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var monthPicker = document.getElementById('monthPicker');
+            var loadingOverlay = document.getElementById('loadingOverlay');
+            
+            monthPicker.addEventListener('change', function() {
+                loadingOverlay.style.display = 'flex'; // Exibe o overlay de carregamento
+                var form = document.getElementById('dateForm');
+                form.submit(); // Envia o formulário
+            });
+
+            // Funções de abertura e fechamento do menu
+            function openNav() {
+                document.getElementById("mySidebar").style.left = "0";
+                document.getElementById("myOverlay").style.display = "block";
+            }
+            function closeNav() {
+                document.getElementById("mySidebar").style.left = "-250px";
+                document.getElementById("myOverlay").style.display = "none";
+            }
+
+            // Adicionar evento de clique aos links para exibir o carregamento
+            document.getElementById('dailyLink').addEventListener('click', function(event) {
+                event.preventDefault(); // Previne o comportamento padrão de navegação
+                document.getElementById('loadingOverlay').style.display = 'flex'; // Exibe o overlay de carregamento
+                setTimeout(function() {
+                    window.location.href = '/'; // Substitua pelo URL real
+                }, 500); // Tempo de atraso para simular carregamento
+            });
+
+            document.getElementById('monthlyLink').addEventListener('click', function(event) {
+                event.preventDefault(); // Previne o comportamento padrão de navegação
+                document.getElementById('loadingOverlay').style.display = 'flex'; // Exibe o overlay de carregamento
+                setTimeout(function() {
+                    window.location.href = '/'; // Substitua pelo URL real
+                }, 500); // Tempo de atraso para simular carregamento
+            });
+
+            // Escuta o evento 'load' da janela para ocultar o overlay após a atualização da página
+            window.addEventListener('load', function() {
+                loadingOverlay.style.display = 'none'; // Oculta o overlay de carregamento quando a página é carregada
+            });
+        });
+    </script>
+</body>
+</html>
