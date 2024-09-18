@@ -10,14 +10,17 @@ import os
 app=Flask(__name__,template_folder='./template')
 
 
-# Configurações do banco de dados
+############################################### CONFIGURAR BANCO
+    
 db_config = {
-    'host': 'localhost',
-    'user': 'admin',
-    'password': 'dix1bolt',
-    'database': 'dados_dashboard',
-    'port': 3317
+    'host': 'localhost',            # SEU HOST 
+    'user': '',                     # SEu USUÁRIO
+    'password': '',                 # SUA SENHA
+    'database': 'dados_dashboard',  # NOME DO BANCO CRIADO
+    'port': 3306                    # PORTA PADRÃO, MUDE CASO NECESSÁRIO
 }
+
+################################################################
 
 def create_connection():
     """Cria e retorna uma conexão com o banco de dados."""

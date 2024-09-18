@@ -122,11 +122,11 @@ A aplicação Flask é inicializada com o diretório de templates definido como 
 
 ```python
 db_config = {
-    'host': 'localhost',
-    'user': 'admin',
-    'password': 'dix1bolt',
-    'database': 'dados_dashboard',
-    'port': 3317
+    'host': 'localhost',            # SEU HOST 
+    'user': '',                     # SEu USUÁRIO
+    'password': '',                 # SUA SENHA
+    'database': 'dados_dashboard',  # NOME DO BANCO CRIADO
+    'port': 3306                    # PORTA PADRÃO, MUDE CASO NECESSÁRIO
 }
 ```
 
